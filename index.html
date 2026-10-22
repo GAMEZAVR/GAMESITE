@@ -189,7 +189,7 @@ input:focus{border-color:var(--cyan)}
 
   function save(){
     render();
-    var line='<script type="application/json" id="data">'+JSON.stringify({items:state.items}).replace(/</g,'\\u003c')+'<\/script>';
+    var line='<script type="application/json" id="<script type="application/json" id="data">{"items":[{"id":"mvjsisrd","title":"SCHOOL13","url":"https://gamezavr.github.io/SCHOOL13/","desc":""},{"id":"shift","title":"SHIFT","url":"https://gamezavr.github.io/SHIFT/","desc":""}]}</script>">'+JSON.stringify({items:state.items}).replace(/</g,'\\u003c')+'<\/script>';
     modal.textContent='';
     var ov=el('div','ov'),box=el('div','box');
     var h=el('h2','px');svg(h,'star');h.appendChild(document.createTextNode('ПОЧТИ ГОТОВО'));box.appendChild(h);
