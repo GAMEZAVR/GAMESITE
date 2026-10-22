@@ -52,6 +52,7 @@ h1{margin:0;font-size:clamp(1.5rem,7vw,3rem);line-height:1.15;background:linear-
 input{font:inherit;color:var(--text);background:var(--bg);border:3px solid var(--purple);padding:11px 12px;width:100%;outline:none}
 input:focus{border-color:var(--cyan)}
 .row{display:flex;gap:10px}
+.box textarea{width:100%;font:12px/1.4 ui-monospace,Menlo,monospace;color:var(--text);background:#0d0a1f;border:3px solid var(--purple);padding:10px;resize:none}
 .btn{font-size:.62rem;cursor:pointer;border:3px solid #000;padding:11px 14px;color:#0d0a1f;background:var(--green);box-shadow:3px 3px 0 #000;flex:1}
 .btn.alt{background:var(--panel);color:var(--text);border-color:var(--purple);box-shadow:none;flex:none}
 .btn:disabled{opacity:.6}
@@ -93,7 +94,7 @@ input:focus{border-color:var(--cyan)}
 <div id="app"></div>
 <div id="modal"></div>
 </main>
-<script type="application/json" id="data">{"items":[]}</script>
+<script type="application/json" id="data">{"items":[{"id":"shift","title":"SHIFT","url":"https://gamezavr.github.io/SHIFT/","desc":""}]}</script>
 <script>
 (function(){
   var HASH='40f85f2db2309be74b90ba3fc8eee155e3f11eaca4859b2129034c46a96a8769';
@@ -177,9 +178,8 @@ input:focus{border-color:var(--cyan)}
         if(/^http:\/\//i.test(url)){err.textContent='Нужна защищённая ссылка https://';return}
         if(!/^https:\/\//i.test(url))url='https://'+url;
         try{var p=new URL(url);if(p.protocol!=='https:'||p.hostname.indexOf('.')<0)throw 0}catch(e){err.textContent='Ссылка выглядит неправильно';return}
-        if(!artifact||!(user&&user.canEdit())){err.textContent='Сохранить может только владелец, войди в свой аккаунт claude.ai';return}
-        state.items.unshift({id:Date.now().toString(36),title:title,url:url,desc:desc});
-        sv.disabled=true;sv.textContent='СОХРАНЯЮ...';save();
+                state.items.unshift({id:Date.now().toString(36),title:title,url:url,desc:desc});
+        save();
       };
       row2.appendChild(sv);row2.appendChild(cl);
       [t,u,d,err,row2].forEach(function(x){box.appendChild(x)});
@@ -188,18 +188,21 @@ input:focus{border-color:var(--cyan)}
   }
 
   function save(){
-    if(!artifact||busy)return;
-    busy=true;
-    var clone=document.documentElement.cloneNode(true);
-    ['#app','#hud','#modal'].forEach(function(s){clone.querySelector(s).textContent=''});
-    clone.querySelector('#data').textContent=JSON.stringify({items:state.items}).replace(/</g,'\\u003c');
-    artifact.publish('<!doctype html>\n'+clone.outerHTML).catch(function(e){
-      busy=false;alert('Не удалось сохранить: '+((e&&e.message)||'ошибка'));location.reload();
-    });
+    render();
+    var line='<script type="application/json" id="data">'+JSON.stringify({items:state.items}).replace(/</g,'\\u003c')+'<\/script>';
+    modal.textContent='';
+    var ov=el('div','ov'),box=el('div','box');
+    var h=el('h2','px');svg(h,'star');h.appendChild(document.createTextNode('ПОЧТИ ГОТОВО'));box.appendChild(h);
+    box.appendChild(el('p',null,'Чтобы изменения остались на сайте: открой index.html на GitHub (карандаш), найди строку с id="data", замени её на эту и нажми Commit.'));
+    var ta=el('textarea');ta.readOnly=true;ta.value=line;ta.rows=6;box.appendChild(ta);
+    var row=el('div','row'),cp=el('button','btn px','КОПИРОВАТЬ'),cl=el('button','btn alt px','ЗАКРЫТЬ');cp.type=cl.type='button';
+    cp.onclick=function(){ta.select();try{navigator.clipboard.writeText(line)}catch(e){document.execCommand('copy')}cp.textContent='СКОПИРОВАНО'};
+    cl.onclick=closeModal;
+    row.appendChild(cp);row.appendChild(cl);box.appendChild(row);
+    ov.appendChild(box);modal.appendChild(ov);
   }
 
   render();
-  (async function(){try{user=await claude.use('user');artifact=await claude.use('artifact')}catch(e){}})();
 })();
 </script>
 <script>
