@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GAMEZAVR</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
+<style>
+:root{--bg:#0d0a1f;--panel:#171233;--text:#f1eeff;--muted:#9a93c9;--cyan:#2ef2ff;--pink:#ff3cac;--yellow:#ffd23f;--green:#7dff6b;--purple:#8b5cf6;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--text);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:
+radial-gradient(circle at 20% 10%,#3b1d7a55,transparent 45%),radial-gradient(circle at 85% 30%,#ff3cac33,transparent 40%),
+radial-gradient(1.5px 1.5px at 20px 30px,#fff9,transparent),radial-gradient(1px 1px at 90px 80px,#2ef2ffaa,transparent),radial-gradient(1.5px 1.5px at 150px 20px,#ffd23fcc,transparent),var(--bg);background-size:auto,auto,170px 120px,170px 120px,170px 120px,auto}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,#0000 0 3px,#0000002e 3px 4px)}
+main{max-width:980px;margin:0 auto;padding:28px 16px 64px;position:relative;z-index:1}
+.px{font-family:"Press Start 2P",ui-monospace,Menlo,monospace}
+header{display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:center;text-align:center}
+.dino{width:190px;flex:none;animation:bob 2.4s ease-in-out infinite;filter:drop-shadow(0 10px 0 #0006)}
+.prop{transform-box:fill-box;transform-origin:center;animation:spin .3s linear infinite}
+@keyframes spin{50%{transform:scaleX(-1)}}
+@keyframes bob{50%{transform:translateY(-8px)}}
+h1{margin:0;font-size:clamp(1.5rem,7vw,3rem);line-height:1.15;background:linear-gradient(90deg,var(--cyan),var(--pink),var(--yellow));-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(4px 4px 0 #000a)}
+.tag{font-size:.62rem;color:var(--muted);margin-top:14px;line-height:1.8}
+.hud{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:26px 0 22px}
+.chip{font-size:.65rem;padding:10px 14px;border:3px solid var(--cyan);color:var(--cyan);background:var(--panel);box-shadow:4px 4px 0 #000;display:flex;align-items:center;gap:8px}
+.chip svg{width:14px;height:14px}
+.addbtn{font-size:.65rem;cursor:pointer;color:#0d0a1f;background:var(--yellow);border:3px solid #000;padding:10px 14px;box-shadow:4px 4px 0 var(--pink);display:flex;align-items:center;gap:8px;transition:transform .1s,box-shadow .1s}
+.addbtn:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--pink)}
+.addbtn svg{width:14px;height:14px}
+.grid{display:grid;gap:22px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.card{--c:var(--cyan);position:relative;display:flex;flex-direction:column;background:var(--panel);border:3px solid var(--c);box-shadow:6px 6px 0 var(--c);text-decoration:none;color:inherit;transition:transform .12s,box-shadow .12s}
+.card:hover{transform:translate(-3px,-3px);box-shadow:9px 9px 0 var(--c)}
+.banner{height:110px;display:grid;place-items:center;color:var(--c);border-bottom:3px solid var(--c);background:linear-gradient(135deg,#ffffff0d,#0006),repeating-linear-gradient(90deg,#ffffff0a 0 12px,#0000 12px 24px),repeating-linear-gradient(0deg,#ffffff0a 0 12px,#0000 12px 24px)}
+.banner svg{width:86px;filter:drop-shadow(4px 4px 0 #000)}
+.card:hover .banner svg{animation:wob .4s steps(2) infinite}
+@keyframes wob{50%{transform:rotate(-6deg) scale(1.05)}}
+.lvl{position:absolute;top:8px;left:8px;font-size:.5rem;background:var(--c);color:#0d0a1f;padding:5px 6px}
+.body{padding:14px;display:flex;flex-direction:column;gap:8px;flex:1}
+.t{font-size:.75rem;line-height:1.5;word-break:break-word}
+.d{color:var(--muted);font-size:.9rem}
+.u{color:var(--muted);font-size:.75rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.play{margin-top:auto;display:flex;align-items:center;justify-content:center;gap:8px;font-size:.65rem;background:var(--c);color:#0d0a1f;padding:11px}
+.play svg{width:11px;height:13px}
+.del{position:absolute;top:6px;right:6px;width:28px;height:28px;border:2px solid #000;background:var(--pink);color:#fff;cursor:pointer;padding:5px}
+.empty{text-align:center;color:var(--muted);padding:44px 10px;border:3px dashed var(--purple);font-size:.65rem;line-height:2}
+.ov{position:fixed;inset:0;z-index:5;background:#000c;display:grid;place-items:center;padding:16px}
+.box{width:100%;max-width:400px;background:var(--panel);border:3px solid var(--yellow);box-shadow:8px 8px 0 var(--purple);padding:22px;display:grid;gap:12px}
+.box h2{margin:0;font-size:.8rem;line-height:1.6;color:var(--yellow);display:flex;align-items:center;gap:10px}
+.box h2 svg{width:24px;height:24px;flex:none}
+.box p{margin:0;color:var(--muted);font-size:.9rem}
+input{font:inherit;color:var(--text);background:var(--bg);border:3px solid var(--purple);padding:11px 12px;width:100%;outline:none}
+input:focus{border-color:var(--cyan)}
+.row{display:flex;gap:10px}
+.btn{font-size:.62rem;cursor:pointer;border:3px solid #000;padding:11px 14px;color:#0d0a1f;background:var(--green);box-shadow:3px 3px 0 #000;flex:1}
+.btn.alt{background:var(--panel);color:var(--text);border-color:var(--purple);box-shadow:none;flex:none}
+.btn:disabled{opacity:.6}
+.err{color:var(--pink);font-size:.85rem;min-height:1.3em}
+</style>
+</head>
+<body>
+<main>
+<header>
+<svg class="dino" viewBox="0 0 240 240" aria-label="Динозавр-талисман">
+<path d="M158 150Q202 150 228 116Q218 178 166 194Z" fill="#7d9150"/>
+<path d="M146 132l6-14 8 12zM164 140l8-13 7 13zM180 152l9-11 6 14z" fill="#9b8cf0"/>
+<ellipse cx="132" cy="166" rx="42" ry="38" fill="#7d9150"/>
+<ellipse cx="122" cy="172" rx="24" ry="29" fill="#c6dba6"/>
+<g fill="#7d9150"><rect x="98" y="196" width="36" height="24" rx="12"/><rect x="138" y="196" width="36" height="24" rx="12"/></g>
+<g fill="#fff"><circle cx="102" cy="218" r="4"/><circle cx="113" cy="220" r="4"/><circle cx="124" cy="219" r="4"/><circle cx="142" cy="218" r="4"/><circle cx="153" cy="220" r="4"/><circle cx="164" cy="219" r="4"/></g>
+<ellipse cx="106" cy="160" rx="13" ry="7" fill="#7d9150" transform="rotate(-20 106 160)"/>
+<circle cx="95" cy="156" r="2.5" fill="#fff"/><circle cx="96" cy="163" r="2.5" fill="#fff"/>
+<ellipse cx="102" cy="102" rx="62" ry="46" fill="#7d9150"/>
+<ellipse cx="86" cy="127" rx="52" ry="20" fill="#c6dba6"/>
+<path d="M36 118Q70 140 114 124Q80 110 36 118Z" fill="#d9707a"/>
+<path d="M50 118l5 9 5-8zM74 121l5 9 5-9z" fill="#fff"/>
+<ellipse cx="34" cy="100" rx="3" ry="2" fill="#5d6f3a"/>
+<g fill="#a99cf5"><circle cx="138" cy="96" r="4"/><circle cx="148" cy="109" r="3"/><circle cx="130" cy="112" r="3"/></g>
+<circle cx="112" cy="94" r="18" fill="#fff"/><circle cx="108" cy="95" r="13" fill="#111"/><circle cx="103" cy="89" r="4" fill="#fff"/>
+<defs><clipPath id="dome"><path d="M54 82Q66 28 118 30Q164 34 160 82Z"/></clipPath></defs>
+<g clip-path="url(#dome)"><rect x="40" y="20" width="36" height="70" fill="#ffc533"/><rect x="76" y="20" width="48" height="70" fill="#e8222a"/><rect x="124" y="20" width="50" height="70" fill="#1f3fc7"/></g>
+<path d="M28 88Q68 66 114 82Q102 100 62 100Q38 98 28 88Z" fill="#0f6b4c"/>
+<rect x="116" y="18" width="3" height="14" fill="#ffd23f"/>
+<g class="prop"><ellipse cx="118" cy="14" rx="36" ry="4.5" fill="#2e7bff" transform="rotate(-8 118 14)"/></g>
+<circle cx="118" cy="30" r="3" fill="#ffd23f"/>
+</svg>
+<div>
+<h1 class="px">GAMEZAVR</h1>
+<div class="tag px">ВСЕ МОИ ИГРЫ<br>В ОДНОМ МЕСТЕ</div>
+</div>
+</header>
+<div class="hud px" id="hud"></div>
+<div id="app"></div>
+<div id="modal"></div>
+</main>
+<script type="application/json" id="data">{"items":[]}</script>
+<script>
+(function(){
+  var HASH='40f85f2db2309be74b90ba3fc8eee155e3f11eaca4859b2129034c46a96a8769';
+  var COLORS=['var(--cyan)','var(--pink)','var(--yellow)','var(--green)','var(--purple)'];
+  var IC={
+    pad:'<svg viewBox="0 0 70 44"><path d="M16 4h38c6 0 10 4 11 10l3 18c1 6-6 9-10 5l-7-8H19l-7 8c-4 4-11 1-10-5l3-18C6 8 10 4 16 4z" fill="currentColor"/><path d="M14 15h14v5H14zM18.500 10.500h5v14h-5z" fill="#0d0a1f"/><circle cx="49" cy="14" r="3.200" fill="#0d0a1f"/><circle cx="56" cy="20" r="3.200" fill="#0d0a1f"/></svg>',
+    plus:'<svg viewBox="0 0 16 16"><path d="M6 1h4v5h5v4h-5v5H6v-5H1V6h5z" fill="currentColor"/></svg>',
+    star:'<svg viewBox="0 0 16 16"><path d="M8 0l2.200 5.400L16 6l-4.400 3.800L13 16 8 12.800 3 16l1.400-6.200L0 6l5.800-.600z" fill="currentColor"/></svg>',
+    lock:'<svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="12" fill="currentColor"/><path d="M7 10V7a5 5 0 0 1 10 0v3" fill="none" stroke="currentColor" stroke-width="3"/><rect x="11" y="14" width="2" height="4" fill="#0d0a1f"/></svg>',
+    play:'<svg viewBox="0 0 12 14"><path d="M1 0l11 7-11 7z" fill="currentColor"/></svg>',
+    x:'<svg viewBox="0 0 16 16"><path d="M2 2l12 12M14 2L2 14" stroke="currentColor" stroke-width="3" fill="none"/></svg>'
+  };
+  var state;
+  try{state=JSON.parse(document.getElementById('data').textContent)}catch(e){state=null}
+  if(!state||!Array.isArray(state.items))state={items:[]};
+  var app=document.getElementById('app'),hud=document.getElementById('hud'),modal=document.getElementById('modal');
+  var artifact=null,user=null,unlocked=false,busy=false;
+
+  function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e}
+  function svg(parent,name){var s=document.createElement('span');s.style.display='contents';s.innerHTML=IC[name];parent.appendChild(s.firstChild)}
+  function pad2(n){return (n<10?'0':'')+n}
+
+  function render(){
+    hud.textContent='';app.textContent='';
+    var chip=el('div','chip');svg(chip,'star');chip.appendChild(document.createTextNode('ИГР: '+pad2(state.items.length)));hud.appendChild(chip);
+    var add=el('button','addbtn px');add.type='button';svg(add,'plus');add.appendChild(document.createTextNode('ДОБАВИТЬ ИГРУ'));
+    add.onclick=function(){openModal(unlocked?'form':'code')};hud.appendChild(add);
+    if(!state.items.length){app.appendChild(el('div','empty px','ПОКА ПУСТО.\nСКОРО ТУТ ПОЯВЯТСЯ ИГРЫ!'));app.firstChild.style.whiteSpace='pre-line';return}
+    var grid=el('div','grid');
+    state.items.forEach(function(it,i){
+      var a=el('a','card');a.href=it.url;a.target='_blank';a.rel='noopener noreferrer';a.style.setProperty('--c',COLORS[(state.items.length-1-i)%COLORS.length]);
+      a.appendChild(el('span','lvl px','LVL '+pad2(state.items.length-i)));
+      var ban=el('div','banner');svg(ban,'pad');a.appendChild(ban);
+      var b=el('div','body');
+      b.appendChild(el('div','t px',it.title));
+      if(it.desc)b.appendChild(el('div','d',it.desc));
+      b.appendChild(el('div','u',it.url.replace(/^https:\/\//,'')));
+      var p=el('div','play px');svg(p,'play');p.appendChild(document.createTextNode('ИГРАТЬ'));b.appendChild(p);
+      a.appendChild(b);
+      if(unlocked){var d=el('button','del');d.type='button';d.title='Удалить';svg(d,'x');
+        d.onclick=function(ev){ev.preventDefault();ev.stopPropagation();if(confirm('Удалить «'+it.title+'»?')){state.items=state.items.filter(function(x){return x.id!==it.id});save()}};a.appendChild(d)}
+      grid.appendChild(a);
+    });
+    app.appendChild(grid);
+  }
+
+  function closeModal(){modal.textContent=''}
+  function openModal(step){
+    modal.textContent='';
+    var ov=el('div','ov'),box=el('div','box');
+    ov.onclick=function(e){if(e.target===ov)closeModal()};
+    var h=el('h2','px');
+    var err=el('div','err');
+    if(step==='code'){
+      svg(h,'lock');h.appendChild(document.createTextNode('СЕКРЕТНЫЙ КОД'));box.appendChild(h);
+      box.appendChild(el('p',null,'Добавлять игры может только владелец сайта. Введи код.'));
+      var c=el('input');c.type='password';c.inputMode='numeric';c.placeholder='••••';c.maxLength=12;c.autocomplete='off';
+      var row=el('div','row'),ok=el('button','btn px','ВОЙТИ'),no=el('button','btn alt px','ОТМЕНА');ok.type=no.type='button';
+      no.onclick=closeModal;
+      var go=async function(){
+        try{
+          var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('gamezavr:'+c.value.trim()));
+          var hex=Array.from(new Uint8Array(buf)).map(function(x){return ('0'+x.toString(16)).slice(-2)}).join('');
+          if(hex===HASH){unlocked=true;render();openModal('form')}else{err.textContent='Неверный код';c.value='';c.focus()}
+        }catch(e){err.textContent='Не удалось проверить код'}
+      };
+      ok.onclick=go;c.onkeydown=function(e){if(e.key==='Enter')go()};
+      row.appendChild(ok);row.appendChild(no);
+      [c,err,row].forEach(function(x){box.appendChild(x)});
+      ov.appendChild(box);modal.appendChild(ov);c.focus();
+    }else{
+      svg(h,'pad');h.appendChild(document.createTextNode('НОВАЯ ИГРА'));box.appendChild(h);
+      var t=el('input');t.placeholder='Название игры';t.maxLength=60;
+      var u=el('input');u.placeholder='Ссылка: https://...';u.inputMode='url';
+      var d=el('input');d.placeholder='Описание (необязательно)';d.maxLength=120;
+      var row2=el('div','row'),sv=el('button','btn px','СОХРАНИТЬ'),cl=el('button','btn alt px','ЗАКРЫТЬ');sv.type=cl.type='button';
+      cl.onclick=closeModal;
+      sv.onclick=function(){
+        var title=t.value.trim(),url=u.value.trim(),desc=d.value.trim();
+        if(!title||!url){err.textContent='Нужны название и ссылка';return}
+        if(/^http:\/\//i.test(url)){err.textContent='Нужна защищённая ссылка https://';return}
+        if(!/^https:\/\//i.test(url))url='https://'+url;
+        try{var p=new URL(url);if(p.protocol!=='https:'||p.hostname.indexOf('.')<0)throw 0}catch(e){err.textContent='Ссылка выглядит неправильно';return}
+        if(!artifact||!(user&&user.canEdit())){err.textContent='Сохранить может только владелец, войди в свой аккаунт claude.ai';return}
+        state.items.unshift({id:Date.now().toString(36),title:title,url:url,desc:desc});
+        sv.disabled=true;sv.textContent='СОХРАНЯЮ...';save();
+      };
+      row2.appendChild(sv);row2.appendChild(cl);
+      [t,u,d,err,row2].forEach(function(x){box.appendChild(x)});
+      ov.appendChild(box);modal.appendChild(ov);t.focus();
+    }
+  }
+
+  function save(){
+    if(!artifact||busy)return;
+    busy=true;
+    var clone=document.documentElement.cloneNode(true);
+    ['#app','#hud','#modal'].forEach(function(s){clone.querySelector(s).textContent=''});
+    clone.querySelector('#data').textContent=JSON.stringify({items:state.items}).replace(/</g,'\\u003c');
+    artifact.publish('<!doctype html>\n'+clone.outerHTML).catch(function(e){
+      busy=false;alert('Не удалось сохранить: '+((e&&e.message)||'ошибка'));location.reload();
+    });
+  }
+
+  render();
+  (async function(){try{user=await claude.use('user');artifact=await claude.use('artifact')}catch(e){}})();
+})();
+</script>
+<script>
+/* Анимированный значок вкладки: динозавр в кепке, пропеллер крутится, голова качается */
+(function(){
+  var DY=[0,-2,-4,-4,-2,0],SX=[1,.5,-.5,-1,-.5,.5];
+  function face(i){
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="24 2 148 148"><rect x="24" y="2" width="148" height="148" rx="30" fill="#0d0a1f"/><g transform="translate(0 '+DY[i]+')">'+
+    '<ellipse cx="102" cy="102" rx="62" ry="46" fill="#7d9150"/><ellipse cx="86" cy="127" rx="52" ry="20" fill="#c6dba6"/>'+
+    '<path d="M36 118Q70 140 114 124Q80 110 36 118Z" fill="#d9707a"/><path d="M50 118l5 9 5-8zM74 121l5 9 5-9z" fill="#fff"/>'+
+    '<g fill="#a99cf5"><circle cx="138" cy="96" r="4"/><circle cx="148" cy="109" r="3"/><circle cx="130" cy="112" r="3"/></g>'+
+    '<circle cx="112" cy="94" r="18" fill="#fff"/><circle cx="108" cy="95" r="13" fill="#111"/><circle cx="103" cy="89" r="4" fill="#fff"/>'+
+    '<defs><clipPath id="d"><path d="M54 82Q66 28 118 30Q164 34 160 82Z"/></clipPath></defs>'+
+    '<g clip-path="url(#d)"><rect x="40" y="20" width="36" height="70" fill="#ffc533"/><rect x="76" y="20" width="48" height="70" fill="#e8222a"/><rect x="124" y="20" width="50" height="70" fill="#1f3fc7"/></g>'+
+    '<path d="M28 88Q68 66 114 82Q102 100 62 100Q38 98 28 88Z" fill="#0f6b4c"/><rect x="116" y="18" width="3" height="14" fill="#ffd23f"/>'+
+    '<g transform="translate(118 14) scale('+SX[i]+' 1)"><ellipse rx="36" ry="5" fill="#2e7bff" transform="rotate(-8)"/></g>'+
+    '<circle cx="118" cy="30" r="3" fill="#ffd23f"/></g></svg>';
+  }
+  var link=document.querySelector('link[rel~="icon"]');
+  if(!link){link=document.createElement('link');link.rel='icon';link.type='image/png';document.head.appendChild(link)}
+  var frames=[],left=DY.length;
+  function done(){
+    if(--left)return;
+    frames=frames.filter(Boolean);
+    if(!frames.length)return;
+    var k=0;link.href=frames[0];
+    setInterval(function(){k=(k+1)%frames.length;link.href=frames[k]},110);
+  }
+  DY.forEach(function(_,i){
+    var img=new Image();
+    img.onload=function(){var c=document.createElement('canvas');c.width=c.height=64;c.getContext('2d').drawImage(img,0,0,64,64);frames[i]=c.toDataURL('image/png');done()};
+    img.onerror=done;
+    img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(face(i));
+  });
+})();
+</script>
+</body>
+</html>
