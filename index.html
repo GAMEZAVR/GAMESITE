@@ -94,7 +94,7 @@ input:focus{border-color:var(--cyan)}
 <div id="app"></div>
 <div id="modal"></div>
 </main>
-<script type="application/json" id="data">{"items":[{"id":"shift","title":"SHIFT","url":"https://gamezavr.github.io/SHIFT/","desc":""}]}</script>
+<script type="application/json" id="data">{"items":[{"id":"school13","title":"SCHOOL13","url":"https://gamezavr.github.io/SCHOOL13/","desc":""},{"id":"shift","title":"SHIFT","url":"https://gamezavr.github.io/SHIFT/","desc":""}]}</script>
 <script>
 (function(){
   var HASH='40f85f2db2309be74b90ba3fc8eee155e3f11eaca4859b2129034c46a96a8769';
@@ -189,7 +189,7 @@ input:focus{border-color:var(--cyan)}
 
   function save(){
     render();
-    var line='<script type="application/json" id="<script type="application/json" id="data">{"items":[{"id":"mvjsisrd","title":"SCHOOL13","url":"https://gamezavr.github.io/SCHOOL13/","desc":""},{"id":"shift","title":"SHIFT","url":"https://gamezavr.github.io/SHIFT/","desc":""}]}</script>">'+JSON.stringify({items:state.items}).replace(/</g,'\\u003c')+'<\/script>';
+    var line='<script type="application/json" id="data">'+JSON.stringify({items:state.items}).replace(/</g,'\\u003c')+'<\/script>';
     modal.textContent='';
     var ov=el('div','ov'),box=el('div','box');
     var h=el('h2','px');svg(h,'star');h.appendChild(document.createTextNode('ПОЧТИ ГОТОВО'));box.appendChild(h);
